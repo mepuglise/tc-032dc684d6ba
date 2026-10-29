@@ -4,14 +4,19 @@ Then: git add -A && git commit -m 'add card' && git push"""
 import sys,os,re,base64,shutil,io,html
 from PIL import Image
 D=os.path.dirname(os.path.abspath(__file__))
-for p in sys.argv[1:]: shutil.copyfile(p,os.path.join(D,'cards',os.path.basename(p)))
+for p in sys.argv[1:]:
+    shutil.copyfile(p,os.path.join(D,'cards',os.path.basename(p)))
+    src=os.path.dirname(os.path.dirname(os.path.abspath(p)))  # new-style card: also copy its portrait + shared back + thumb
+    for rel in re.findall(r'src="\.\./((?:portraits|assets)/[^"]+)"',open(p).read())+['thumbs/'+os.path.basename(p)[:-5]+'.jpg']:
+        if os.path.exists(os.path.join(src,rel)) and not os.path.exists(os.path.join(D,rel)):
+            os.makedirs(os.path.dirname(os.path.join(D,rel)),exist_ok=True);shutil.copyfile(os.path.join(src,rel),os.path.join(D,rel))
 items=[]
 for f in sorted(os.listdir(os.path.join(D,'cards'))):
     if not f.endswith('.html'): continue
     n=f[:-5]; s=open(os.path.join(D,'cards',f),encoding='utf-8',errors='ignore').read()
     m=re.search(r'class="art">\s*<img src="data:image/\w+;base64,([^"]+)"',s) or re.search(r'data:image/\w+;base64,([^"\')]+)',s)
     t=os.path.join(D,'thumbs',n+'.jpg')
-    if m:
+    if m and not os.path.exists(t):
         im=Image.open(io.BytesIO(base64.b64decode(m.group(1)))).convert('RGB'); im.thumbnail((480,480)); im.save(t,quality=82)
     items.append(n)
 cards=''.join(f'<a class="c" href="cards/{html.escape(n)}.html"><img src="thumbs/{html.escape(n)}.jpg" alt="{html.escape(n)}" loading="lazy"><span>{html.escape(n)}</span></a>' for n in items)
