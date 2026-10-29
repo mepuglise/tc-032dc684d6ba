@@ -11,7 +11,9 @@ for p in sys.argv[1:]:
         if os.path.exists(os.path.join(src,rel)) and not os.path.exists(os.path.join(D,rel)):
             os.makedirs(os.path.dirname(os.path.join(D,rel)),exist_ok=True);shutil.copyfile(os.path.join(src,rel),os.path.join(D,rel))
 items=[]
-for f in sorted(os.listdir(os.path.join(D,'cards'))):
+import sys as _s;_s.path.insert(0,'/workspace/ebreon-card/pipeline');import special as _SP
+_ORD={**{o['file']+'.html':-1 for o in _SP.OPENERS},**{o['file']+'.html':k+1 for k,o in enumerate(_SP.MIDDLE+_SP.FINALE)}}  # Professor first, finale last
+for f in sorted(os.listdir(os.path.join(D,'cards')),key=lambda x:(_ORD.get(x,0),x)):
     if not f.endswith('.html'): continue
     n=f[:-5]; s=open(os.path.join(D,'cards',f),encoding='utf-8',errors='ignore').read()
     m=re.search(r'class="art">\s*<img src="data:image/\w+;base64,([^"]+)"',s) or re.search(r'data:image/\w+;base64,([^"\')]+)',s)
