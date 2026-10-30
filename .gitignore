@@ -1,2 +1,4 @@
 queue.json
 queue.json.tmp
+*.log
+*.bak-*
