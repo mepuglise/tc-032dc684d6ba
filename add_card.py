@@ -21,7 +21,7 @@ for f in sorted(os.listdir(os.path.join(D,'cards')),key=lambda x:(_ORD.get(x,0),
     if m and not os.path.exists(t):
         im=Image.open(io.BytesIO(base64.b64decode(m.group(1)))).convert('RGB'); im.thumbnail((480,480)); im.save(t,quality=82)
     items.append(n)
-cards=''.join(f'<a class="c" href="cards/{html.escape(n)}.html"><img src="thumbs/{html.escape(n)}.jpg" alt="{html.escape(n)}" loading="lazy"><span>{html.escape(n)}</span></a>' for n in items)
+cards=''.join(f'<a class="c" href="cards/{html.escape(n)}.html"><img src="thumbs/{html.escape(n)}.jpg" alt="{html.escape(n)}" loading="lazy"><span>{html.escape(n)}</span></a>' for n in items) or '<p style="grid-column:1/-1;text-align:center;opacity:.8;font-size:1rem;padding:40px 0">Cards are being caught… check back soon!</p>'
 open(os.path.join(D,'index.html'),'w').write(f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>The Company Pokédex — Caught 2026</title>
 <style>body{{margin:0;font-family:system-ui,sans-serif;background:#12101c;color:#f3eefc}}header{{padding:20px 16px 8px;text-align:center}}h1{{font-size:1.4rem;margin:0 0 6px}}p{{margin:0;opacity:.7;font-size:.85rem}}
 .g{{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;padding:16px;max-width:1000px;margin:auto}}
